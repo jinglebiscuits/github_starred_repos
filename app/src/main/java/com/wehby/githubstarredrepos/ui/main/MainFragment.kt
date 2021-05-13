@@ -12,7 +12,12 @@ import androidx.lifecycle.ViewModelProvider
 import com.android.volley.Request
 import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.Volley
+import com.google.gson.Gson
+import com.google.gson.JsonObject
 import com.wehby.githubstarredrepos.R
+import com.wehby.githubstarredrepos.model.GitHubRepository
+import com.wehby.githubstarredrepos.model.Owner
+import org.json.JSONObject
 
 private const val LOG_TAG = "MainFragment"
 
@@ -37,6 +42,10 @@ class MainFragment : Fragment() {
             //need to find stargazers_count
             val stringRequest = JsonObjectRequest(Request.Method.GET, url, null, { response ->
                 textView.text = "Response is: %s".format(response.toString())
+                var gson = Gson()
+                var firstItem: JSONObject = response.getJSONArray("items").get(0) as JSONObject
+                var repository = gson.fromJson(firstItem.toString(), GitHubRepository::class.java)
+                Log.d(LOG_TAG, "got the data")
             },
                 { textView.text = "That didn't work!" })
             queue.add(stringRequest)

@@ -11,6 +11,8 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.wehby.githubstarredrepos.R
 
+private const val LOG_TAG = "MainFragment"
+
 class MainFragment : Fragment() {
 
     private lateinit var viewModel: MainViewModel
@@ -25,7 +27,7 @@ class MainFragment : Fragment() {
         textView = view.findViewById(R.id.message)
         makeRequestButton = view.findViewById(R.id.make_request_button)
         makeRequestButton.setOnClickListener {
-            Log.d("MainFragemtn", "clicking")
+            Log.d(LOG_TAG, "clicking")
         }
         return view
     }

@@ -9,6 +9,10 @@ import android.widget.Button
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import com.android.volley.Request
+import com.android.volley.Response
+import com.android.volley.toolbox.StringRequest
+import com.android.volley.toolbox.Volley
 import com.wehby.githubstarredrepos.R
 
 private const val LOG_TAG = "MainFragment"
@@ -28,12 +32,21 @@ class MainFragment : Fragment() {
         makeRequestButton = view.findViewById(R.id.make_request_button)
         makeRequestButton.setOnClickListener {
             Log.d(LOG_TAG, "clicking")
+            val queue = Volley.newRequestQueue(requireContext())
+            val url = "https://api.github.com/search/repositories?q=stars\u200B:>0"
+
+            val stringRequest = StringRequest(Request.Method.GET, url, { response ->
+                textView.text = "Response is: ${response.substring(0, 500)}"
+            },
+                { textView.text = "That didn't work!" })
+            queue.add(stringRequest)
         }
         return view
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+
         viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
         // TODO: Use the ViewModel
     }

@@ -10,8 +10,7 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.android.volley.Request
-import com.android.volley.Response
-import com.android.volley.toolbox.StringRequest
+import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.Volley
 import com.wehby.githubstarredrepos.R
 
@@ -33,10 +32,11 @@ class MainFragment : Fragment() {
         makeRequestButton.setOnClickListener {
             Log.d(LOG_TAG, "clicking")
             val queue = Volley.newRequestQueue(requireContext())
-            val url = "https://api.github.com/search/repositories?q=stars\u200B:>0"
+            val url = "https://api.github.com/search/repositories?q=stars&order=desc"
 
-            val stringRequest = StringRequest(Request.Method.GET, url, { response ->
-                textView.text = "Response is: ${response.substring(0, 500)}"
+            //need to find stargazers_count
+            val stringRequest = JsonObjectRequest(Request.Method.GET, url, null, { response ->
+                textView.text = "Response is: %s".format(response.toString())
             },
                 { textView.text = "That didn't work!" })
             queue.add(stringRequest)

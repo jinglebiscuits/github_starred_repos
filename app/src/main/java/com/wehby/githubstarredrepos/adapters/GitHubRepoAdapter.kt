@@ -6,10 +6,12 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.wehby.githubstarredrepos.R
 import com.wehby.githubstarredrepos.model.GitHubRepository
 
-class GitHubRepoAdapter(private val gitHubRepos: List<GitHubRepository>) : RecyclerView.Adapter<GitHubRepoAdapter.GitHubRepoItemViewHolder>() {
+class GitHubRepoAdapter(private val gitHubRepos: List<GitHubRepository>) :
+    RecyclerView.Adapter<GitHubRepoAdapter.GitHubRepoItemViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GitHubRepoItemViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.repository_layout, parent, false)
@@ -21,6 +23,7 @@ class GitHubRepoAdapter(private val gitHubRepos: List<GitHubRepository>) : Recyc
         holder.repoName.text = gitHubRepos[position].name
         holder.repoDescription.text = gitHubRepos[position].description
         holder.starCount.text = gitHubRepos[position].stargazers_count.toString()
+        Glide.with(holder.userAvatar).load(gitHubRepos[position].owner.avatar_url).into(holder.userAvatar)
     }
 
     override fun getItemCount(): Int {

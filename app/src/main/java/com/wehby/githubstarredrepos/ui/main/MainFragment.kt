@@ -41,7 +41,7 @@ class MainFragment : Fragment() {
         makeRequestButton.setOnClickListener {
             Log.d(LOG_TAG, "clicking")
             val queue = Volley.newRequestQueue(requireContext())
-            val url = "https://api.github.com/search/repositories?q=stars&order=desc"
+            val url = "https://api.github.com/search/repositories?q=stars"
 
             //need to find stargazers_count
             val stringRequest = JsonObjectRequest(Request.Method.GET, url, null, { response ->

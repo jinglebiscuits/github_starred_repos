@@ -41,7 +41,7 @@ class MainFragment : Fragment() {
         makeRequestButton.setOnClickListener {
             Log.d(LOG_TAG, "clicking")
             val queue = Volley.newRequestQueue(requireContext())
-            val url = "https://api.github.com/search/repositories?q=stars"
+            val url = "https://api.github.com/search/repositories?q=stars%3A%3E0&per_page=100"
 
             //need to find stargazers_count
             val stringRequest = JsonObjectRequest(Request.Method.GET, url, null, { response ->
@@ -58,7 +58,7 @@ class MainFragment : Fragment() {
                 repoRecyclerView.setHasFixedSize(true)
                 repoRecyclerView.layoutManager = LinearLayoutManager(activity)
                 repoRecyclerView.adapter = repoListAdapter
-                Log.d(LOG_TAG, "got the data")
+                Log.d(LOG_TAG, "got the data ${repoList.size}")
             },
                 { Log.e(LOG_TAG, "error") })
             queue.add(stringRequest)

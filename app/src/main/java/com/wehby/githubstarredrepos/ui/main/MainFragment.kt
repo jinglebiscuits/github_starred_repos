@@ -28,7 +28,7 @@ class MainFragment : Fragment() {
 
     private lateinit var viewModel: MainViewModel
     private lateinit var makeRequestButton: Button
-    private lateinit var repoList: RecyclerView
+    private lateinit var repoRecyclerView: RecyclerView
     private lateinit var repoListAdapter: GitHubRepoAdapter
 
     override fun onCreateView(
@@ -36,7 +36,7 @@ class MainFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         val view = inflater.inflate(R.layout.main_fragment, container, false)
-        repoList = view.findViewById(R.id.repo_list)
+        repoRecyclerView = view.findViewById(R.id.repo_list)
         makeRequestButton = view.findViewById(R.id.make_request_button)
         makeRequestButton.setOnClickListener {
             Log.d(LOG_TAG, "clicking")
@@ -46,12 +46,18 @@ class MainFragment : Fragment() {
             //need to find stargazers_count
             val stringRequest = JsonObjectRequest(Request.Method.GET, url, null, { response ->
                 var gson = Gson()
-                var firstItem: JSONObject = response.getJSONArray("items").get(0) as JSONObject
-                var repository = gson.fromJson(firstItem.toString(), GitHubRepository::class.java)
-                repoListAdapter = GitHubRepoAdapter(arrayOf(repository))
-                repoList.setHasFixedSize(true)
-                repoList.layoutManager = LinearLayoutManager(activity)
-                repoList.adapter = repoListAdapter
+
+                val jsonArray = response.getJSONArray("items")
+                var repoList = mutableListOf<GitHubRepository>()
+                for (i in 0 until jsonArray.length()) {
+                    var item: JSONObject = response.getJSONArray("items").get(i) as JSONObject
+                    repoList.add(gson.fromJson(item.toString(), GitHubRepository::class.java))
+                }
+
+                repoListAdapter = GitHubRepoAdapter(repoList)
+                repoRecyclerView.setHasFixedSize(true)
+                repoRecyclerView.layoutManager = LinearLayoutManager(activity)
+                repoRecyclerView.adapter = repoListAdapter
                 Log.d(LOG_TAG, "got the data")
             },
                 { Log.e(LOG_TAG, "error") })

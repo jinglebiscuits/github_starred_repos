@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.wehby.githubstarredrepos.R
 import com.wehby.githubstarredrepos.model.GitHubRepository
 
-class GitHubRepoAdapter(private val gitHubRepos: Array<GitHubRepository>) : RecyclerView.Adapter<GitHubRepoAdapter.GitHubRepoItemViewHolder>() {
+class GitHubRepoAdapter(private val gitHubRepos: List<GitHubRepository>) : RecyclerView.Adapter<GitHubRepoAdapter.GitHubRepoItemViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GitHubRepoItemViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.repository_layout, parent, false)

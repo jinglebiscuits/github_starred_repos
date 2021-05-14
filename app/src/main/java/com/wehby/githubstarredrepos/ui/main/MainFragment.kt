@@ -9,12 +9,15 @@ import android.widget.Button
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.android.volley.Request
 import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.Volley
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 import com.wehby.githubstarredrepos.R
+import com.wehby.githubstarredrepos.adapters.GitHubRepoAdapter
 import com.wehby.githubstarredrepos.model.GitHubRepository
 import com.wehby.githubstarredrepos.model.Owner
 import org.json.JSONObject
@@ -24,15 +27,16 @@ private const val LOG_TAG = "MainFragment"
 class MainFragment : Fragment() {
 
     private lateinit var viewModel: MainViewModel
-    private lateinit var textView: TextView
     private lateinit var makeRequestButton: Button
+    private lateinit var repoList: RecyclerView
+    private lateinit var repoListAdapter: GitHubRepoAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         val view = inflater.inflate(R.layout.main_fragment, container, false)
-        textView = view.findViewById(R.id.message)
+        repoList = view.findViewById(R.id.repo_list)
         makeRequestButton = view.findViewById(R.id.make_request_button)
         makeRequestButton.setOnClickListener {
             Log.d(LOG_TAG, "clicking")
@@ -41,13 +45,16 @@ class MainFragment : Fragment() {
 
             //need to find stargazers_count
             val stringRequest = JsonObjectRequest(Request.Method.GET, url, null, { response ->
-                textView.text = "Response is: %s".format(response.toString())
                 var gson = Gson()
                 var firstItem: JSONObject = response.getJSONArray("items").get(0) as JSONObject
                 var repository = gson.fromJson(firstItem.toString(), GitHubRepository::class.java)
+                repoListAdapter = GitHubRepoAdapter(arrayOf(repository))
+                repoList.setHasFixedSize(true)
+                repoList.layoutManager = LinearLayoutManager(activity)
+                repoList.adapter = repoListAdapter
                 Log.d(LOG_TAG, "got the data")
             },
-                { textView.text = "That didn't work!" })
+                { Log.e(LOG_TAG, "error") })
             queue.add(stringRequest)
         }
         return view

@@ -23,6 +23,7 @@ import com.wehby.githubstarredrepos.model.Owner
 import org.json.JSONObject
 
 private const val LOG_TAG = "MainFragment"
+private const val REPO_SEARCH_URL = "https://api.github.com/search/repositories?q=stars%3A%3E0&per_page=100"
 
 class MainFragment : Fragment() {
 
@@ -41,10 +42,9 @@ class MainFragment : Fragment() {
         makeRequestButton.setOnClickListener {
             Log.d(LOG_TAG, "clicking")
             val queue = Volley.newRequestQueue(requireContext())
-            val url = "https://api.github.com/search/repositories?q=stars%3A%3E0&per_page=100"
 
             //need to find stargazers_count
-            val stringRequest = JsonObjectRequest(Request.Method.GET, url, null, { response ->
+            val stringRequest = JsonObjectRequest(Request.Method.GET, REPO_SEARCH_URL, null, { response ->
                 var gson = Gson()
 
                 val jsonArray = response.getJSONArray("items")

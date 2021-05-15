@@ -12,7 +12,7 @@ import com.wehby.githubstarredrepos.model.GitHubRepository
 
 private const val NAME_SEPARATOR = " / "
 
-class GitHubRepoAdapter(private val gitHubRepos: List<GitHubRepository>) :
+class GitHubRepoAdapter(private val gitHubRepos: ArrayList<GitHubRepository>) :
     RecyclerView.Adapter<GitHubRepoAdapter.GitHubRepoItemViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GitHubRepoItemViewHolder {
@@ -25,10 +25,20 @@ class GitHubRepoAdapter(private val gitHubRepos: List<GitHubRepository>) :
         holder.repoDescription.text = gitHubRepos[position].description
         holder.starCount.text = gitHubRepos[position].stargazers_count.toString()
         Glide.with(holder.userAvatar).load(gitHubRepos[position].owner.avatar_url).into(holder.userAvatar)
+        if (gitHubRepos[position].contributors != null) {
+            Glide.with(holder.contributor1).load(gitHubRepos[position].contributors[0].avatar_url).into(holder.contributor1)
+            Glide.with(holder.contributor2).load(gitHubRepos[position].contributors[1].avatar_url).into(holder.contributor2)
+            Glide.with(holder.contributor3).load(gitHubRepos[position].contributors[2].avatar_url).into(holder.contributor3)
+        }
     }
 
     override fun getItemCount(): Int {
         return gitHubRepos.size
+    }
+
+    fun updateItem(updatedRepo: GitHubRepository, position: Int) {
+        gitHubRepos[position] = updatedRepo
+        notifyItemChanged(position)
     }
 
     class GitHubRepoItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {

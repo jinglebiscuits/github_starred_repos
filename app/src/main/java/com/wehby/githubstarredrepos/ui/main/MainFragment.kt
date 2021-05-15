@@ -48,7 +48,7 @@ class MainFragment : Fragment() {
                 val gson = Gson()
 
                 val jsonArray = response.getJSONArray("items")
-                val repoList = mutableListOf<GitHubRepository>()
+                val repoList = ArrayList<GitHubRepository>()
                 repoListAdapter = GitHubRepoAdapter(repoList)
                 for (i in 0 until jsonArray.length()) {
                     val item: JSONObject = response.getJSONArray("items").get(i) as JSONObject
@@ -63,10 +63,14 @@ class MainFragment : Fragment() {
                                 val contributorItem: JSONObject = response[x] as JSONObject
                                 contributorList.add(gson.fromJson(contributorItem.toString(), Contributor::class.java))
                             }
+                            repo.contributors = contributorList
+                            repoListAdapter.updateItem(repo, i)
+                            repoListAdapter.notifyDataSetChanged()
                             Log.d(LOG_TAG, responseString)
                         }, {
                             it.printStackTrace()
-                            Log.e(LOG_TAG, "error getting contributors ${it.localizedMessage}") })
+                            Log.e(LOG_TAG, "error getting contributors ${it.localizedMessage}")
+                        })
                         queue.add(contributorRequest)
                     }
                 }

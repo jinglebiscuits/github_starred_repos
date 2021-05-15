@@ -54,25 +54,23 @@ class MainFragment : Fragment() {
                     val item: JSONObject = response.getJSONArray("items").get(i) as JSONObject
                     var repo = gson.fromJson(item.toString(), GitHubRepository::class.java)
                     repoList.add(gson.fromJson(item.toString(), GitHubRepository::class.java))
-                    if (i == 2) {
-                        val url = URL("https", "api.github.com", "/repos/${repo.owner.login}/${repo.name}/contributors?per_page=3")
-                        val contributorRequest = JsonArrayRequest(Request.Method.GET, url.toString(), null, { response ->
-                            val responseString = response.toString()
-                            val contributorList = mutableListOf<Contributor>()
-                            for (x in 0 until response.length()) {
-                                val contributorItem: JSONObject = response[x] as JSONObject
-                                contributorList.add(gson.fromJson(contributorItem.toString(), Contributor::class.java))
-                            }
-                            repo.contributors = contributorList
-                            repoListAdapter.updateItem(repo, i)
-                            repoListAdapter.notifyDataSetChanged()
-                            Log.d(LOG_TAG, responseString)
-                        }, {
-                            it.printStackTrace()
-                            Log.e(LOG_TAG, "error getting contributors ${it.localizedMessage}")
-                        })
-                        queue.add(contributorRequest)
-                    }
+                    val url = URL("https", "api.github.com", "/repos/${repo.owner.login}/${repo.name}/contributors?per_page=3")
+                    val contributorRequest = JsonArrayRequest(Request.Method.GET, url.toString(), null, { response ->
+                        val responseString = response.toString()
+                        val contributorList = mutableListOf<Contributor>()
+                        for (x in 0 until response.length()) {
+                            val contributorItem: JSONObject = response[x] as JSONObject
+                            contributorList.add(gson.fromJson(contributorItem.toString(), Contributor::class.java))
+                        }
+                        repo.contributors = contributorList
+                        repoListAdapter.updateItem(repo, i)
+                        repoListAdapter.notifyDataSetChanged()
+                        Log.d(LOG_TAG, responseString)
+                    }, {
+                        it.printStackTrace()
+                        Log.e(LOG_TAG, "error getting contributors ${it.localizedMessage}")
+                    })
+                    queue.add(contributorRequest)
                 }
 
                 repoRecyclerView.setHasFixedSize(true)

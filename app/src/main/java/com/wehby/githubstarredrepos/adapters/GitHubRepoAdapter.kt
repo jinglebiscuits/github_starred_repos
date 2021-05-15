@@ -36,6 +36,9 @@ class GitHubRepoAdapter(
             setupContributorView(holder.contributor2, gitHubRepos[position].contributors[1])
             setupContributorView(holder.contributor3, gitHubRepos[position].contributors[2])
         }
+        holder.mainLayout.setOnClickListener {
+            onUrlContainerClickedListener.onUriContainerClicked(Uri.parse(gitHubRepos[position].html_url))
+        }
     }
 
     private fun setupContributorView(contributorView: ImageView, contributor: Contributor) {
@@ -55,6 +58,7 @@ class GitHubRepoAdapter(
     }
 
     class GitHubRepoItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        val mainLayout: View = itemView.findViewById(R.id.main_layout)
         val userAndRepoName: TextView = itemView.findViewById(R.id.user_and_repo_name)
         val userAvatar: ImageView = itemView.findViewById(R.id.repo_owner_avatar)
         val contributor1: ImageView = itemView.findViewById(R.id.contributor1)

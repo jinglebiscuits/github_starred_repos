@@ -5,8 +5,6 @@ import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.android.volley.Request
-import com.android.volley.toolbox.JsonArrayRequest
 import com.android.volley.toolbox.Volley
 import com.google.gson.Gson
 import com.wehby.githubstarredrepos.BuildConfig
@@ -16,7 +14,6 @@ import org.json.JSONObject
 import java.net.URL
 
 private const val LOG_TAG = "RepoViewModel"
-private const val REPO_SEARCH_URL = "https://api.github.com/search/repositories?q=stars%3A%3E0&per_page=2"
 
 class RepoViewModel(application: Application) : AndroidViewModel(application) {
     private val reposLiveData: MutableLiveData<List<GitHubRepository>> by lazy {
@@ -33,8 +30,10 @@ class RepoViewModel(application: Application) : AndroidViewModel(application) {
         Log.d(LOG_TAG, "loading repos")
         val queue = Volley.newRequestQueue(getApplication())
         //need to find stargazers_count
+        val pageSize = if (BuildConfig.GITHUB_TOKEN == "") 5 else 100
+        val url = "https://api.github.com/search/repositories?q=stars%3A%3E0&per_page=$pageSize"
         val stringRequest = GitHubObjectRequest(
-            REPO_SEARCH_URL, { response ->
+            url, { response ->
                 val gson = Gson()
 
                 val jsonArray = response.getJSONArray("items")

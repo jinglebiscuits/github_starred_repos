@@ -23,7 +23,7 @@ import org.json.JSONObject
 import java.net.URL
 
 private const val LOG_TAG = "MainFragment"
-private const val REPO_SEARCH_URL = "https://api.github.com/search/repositories?q=stars%3A%3E0&per_page=100"
+private const val REPO_SEARCH_URL = "https://api.github.com/search/repositories?q=stars%3A%3E0&per_page=2"
 
 class MainFragment : Fragment() {
 

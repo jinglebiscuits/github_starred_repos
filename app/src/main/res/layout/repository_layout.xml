@@ -84,6 +84,7 @@
                 android:layout_margin="2dp"
                 android:clickable="true"
                 android:focusable="true"
+                android:foreground="?attr/selectableItemBackground"
                 android:src="@mipmap/ic_launcher" />
 
             <androidx.appcompat.widget.AppCompatImageView
@@ -94,6 +95,7 @@
                 android:layout_margin="2dp"
                 android:clickable="true"
                 android:focusable="true"
+                android:foreground="?attr/selectableItemBackground"
                 android:src="@mipmap/ic_launcher" />
 
             <androidx.appcompat.widget.AppCompatImageView
@@ -104,6 +106,7 @@
                 android:layout_margin="2dp"
                 android:clickable="true"
                 android:focusable="true"
+                android:foreground="?attr/selectableItemBackground"
                 android:src="@mipmap/ic_launcher" />
         </LinearLayout>
 

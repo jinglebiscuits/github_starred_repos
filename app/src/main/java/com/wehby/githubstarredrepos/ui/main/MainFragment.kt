@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -22,6 +23,7 @@ import com.wehby.githubstarredrepos.adapters.GitHubRepoAdapter
 import com.wehby.githubstarredrepos.listeners.OnUriContainerClickedListener
 import com.wehby.githubstarredrepos.model.Contributor
 import com.wehby.githubstarredrepos.model.GitHubRepository
+import com.wehby.githubstarredrepos.viewmodels.RepoViewModel
 import org.json.JSONObject
 import java.net.URL
 
@@ -30,7 +32,7 @@ private const val REPO_SEARCH_URL = "https://api.github.com/search/repositories?
 
 class MainFragment : Fragment(), OnUriContainerClickedListener {
 
-    private lateinit var viewModel: MainViewModel
+    private val viewModel: RepoViewModel by viewModels()
     private lateinit var makeRequestButton: Button
     private lateinit var repoRecyclerView: RecyclerView
     private lateinit var repoListAdapter: GitHubRepoAdapter
@@ -52,7 +54,6 @@ class MainFragment : Fragment(), OnUriContainerClickedListener {
 
                 val jsonArray = response.getJSONArray("items")
                 val repoList = ArrayList<GitHubRepository>()
-                repoListAdapter = GitHubRepoAdapter(repoList, this)
                 for (i in 0 until jsonArray.length()) {
                     val item: JSONObject = response.getJSONArray("items").get(i) as JSONObject
                     var repo = gson.fromJson(item.toString(), GitHubRepository::class.java)
@@ -75,23 +76,25 @@ class MainFragment : Fragment(), OnUriContainerClickedListener {
                     })
                     queue.add(contributorRequest)
                 }
-
-                repoRecyclerView.setHasFixedSize(true)
-                repoRecyclerView.layoutManager = LinearLayoutManager(activity)
-                repoRecyclerView.adapter = repoListAdapter
                 Log.d(LOG_TAG, "got the data ${repoList.size}")
             },
                 { Log.e(LOG_TAG, "error") })
             queue.add(stringRequest)
         }
+        repoRecyclerView.setHasFixedSize(true)
+        repoRecyclerView.layoutManager = LinearLayoutManager(activity)
+        Log.d(LOG_TAG, "JEDI creating the adapter")
+        repoListAdapter = GitHubRepoAdapter(this)
+        repoRecyclerView.adapter = repoListAdapter
         return view
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-
-        viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
-        // TODO: Use the ViewModel
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        viewModel.getRepos().observe(viewLifecycleOwner) {
+            Log.d(LOG_TAG, "JEDI setting live data on adapter")
+            repoListAdapter.updateList(it as ArrayList<GitHubRepository>)
+        }
     }
 
     override fun onUriContainerClicked(uri: Uri) {

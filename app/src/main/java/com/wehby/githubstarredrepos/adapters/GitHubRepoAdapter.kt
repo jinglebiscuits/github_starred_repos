@@ -16,10 +16,11 @@ import com.wehby.githubstarredrepos.model.GitHubRepository
 private const val NAME_SEPARATOR = " / "
 
 class GitHubRepoAdapter(
-    private val gitHubRepos: ArrayList<GitHubRepository>,
     private val onUrlContainerClickedListener: OnUriContainerClickedListener
 ) :
     RecyclerView.Adapter<GitHubRepoAdapter.GitHubRepoItemViewHolder>() {
+
+    private var gitHubRepos = ArrayList<GitHubRepository>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GitHubRepoItemViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.repository_layout, parent, false)
@@ -50,6 +51,11 @@ class GitHubRepoAdapter(
 
     override fun getItemCount(): Int {
         return gitHubRepos.size
+    }
+
+    fun updateList(newRepos: ArrayList<GitHubRepository>) {
+        gitHubRepos = newRepos
+        notifyDataSetChanged()
     }
 
     fun updateItem(updatedRepo: GitHubRepository, position: Int) {

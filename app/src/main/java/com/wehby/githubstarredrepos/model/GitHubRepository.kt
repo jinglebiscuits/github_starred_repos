@@ -1,9 +1,12 @@
 package com.wehby.githubstarredrepos.model
 
-data class GitHubRepository(
+class GitHubRepository(
     val id: Int,
     val name: String,
     val owner: Owner,
     val description: String,
-    val stargazers_count: Int
-)
+    val stargazers_count: Int,
+    var contributors: MutableList<Contributor> = mutableListOf()
+) {
+
+}

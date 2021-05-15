@@ -31,9 +31,12 @@ class GitHubRepoAdapter(private val gitHubRepos: List<GitHubRepository>) :
         return gitHubRepos.size
     }
 
-    class GitHubRepoItemViewHolder(private val itemView: View) : RecyclerView.ViewHolder(itemView) {
+    class GitHubRepoItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val userAndRepoName: TextView = itemView.findViewById(R.id.user_and_repo_name)
         val userAvatar: ImageView = itemView.findViewById(R.id.repo_owner_avatar)
+        val contributor1: ImageView = itemView.findViewById(R.id.contributor1)
+        val contributor2: ImageView = itemView.findViewById(R.id.contributor2)
+        val contributor3: ImageView = itemView.findViewById(R.id.contributor3)
         val repoDescription: TextView = itemView.findViewById(R.id.repo_description)
         val starCount: TextView = itemView.findViewById(R.id.star_count)
     }

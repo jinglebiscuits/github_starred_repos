@@ -45,16 +45,17 @@ class MainFragment : Fragment() {
 
             //need to find stargazers_count
             val stringRequest = JsonObjectRequest(Request.Method.GET, REPO_SEARCH_URL, null, { response ->
-                var gson = Gson()
+                val gson = Gson()
 
                 val jsonArray = response.getJSONArray("items")
-                var repoList = mutableListOf<GitHubRepository>()
+                val repoList = mutableListOf<GitHubRepository>()
+                repoListAdapter = GitHubRepoAdapter(repoList)
                 for (i in 0 until jsonArray.length()) {
-                    var item: JSONObject = response.getJSONArray("items").get(i) as JSONObject
+                    val item: JSONObject = response.getJSONArray("items").get(i) as JSONObject
+                    var repo = gson.fromJson(item.toString(), GitHubRepository::class.java)
                     repoList.add(gson.fromJson(item.toString(), GitHubRepository::class.java))
                 }
 
-                repoListAdapter = GitHubRepoAdapter(repoList)
                 repoRecyclerView.setHasFixedSize(true)
                 repoRecyclerView.layoutManager = LinearLayoutManager(activity)
                 repoRecyclerView.adapter = repoListAdapter

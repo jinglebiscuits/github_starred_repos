@@ -5,18 +5,15 @@ import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.android.volley.Request
-import com.android.volley.toolbox.JsonArrayRequest
-import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.Volley
 import com.google.gson.Gson
+import com.wehby.githubstarredrepos.BuildConfig
 import com.wehby.githubstarredrepos.model.Contributor
 import com.wehby.githubstarredrepos.model.GitHubRepository
 import org.json.JSONObject
 import java.net.URL
 
 private const val LOG_TAG = "RepoViewModel"
-private const val REPO_SEARCH_URL = "https://api.github.com/search/repositories?q=stars%3A%3E0&per_page=2"
 
 class RepoViewModel(application: Application) : AndroidViewModel(application) {
     private val reposLiveData: MutableLiveData<List<GitHubRepository>> by lazy {
@@ -32,10 +29,11 @@ class RepoViewModel(application: Application) : AndroidViewModel(application) {
     private fun loadRepos() {
         Log.d(LOG_TAG, "loading repos")
         val queue = Volley.newRequestQueue(getApplication())
-
         //need to find stargazers_count
-        val stringRequest = JsonObjectRequest(
-            Request.Method.GET, REPO_SEARCH_URL, null, { response ->
+        val pageSize = if (BuildConfig.GITHUB_TOKEN == "") 5 else 100
+        val url = "https://api.github.com/search/repositories?q=stars%3A%3E0&per_page=$pageSize"
+        val stringRequest = GitHubObjectRequest(
+            url, { response ->
                 val gson = Gson()
 
                 val jsonArray = response.getJSONArray("items")
@@ -45,7 +43,7 @@ class RepoViewModel(application: Application) : AndroidViewModel(application) {
                     var repo = gson.fromJson(item.toString(), GitHubRepository::class.java)
                     repoList.add(gson.fromJson(item.toString(), GitHubRepository::class.java))
                     val url = URL("https", "api.github.com", "/repos/${repo.owner.login}/${repo.name}/contributors?per_page=3")
-                    val contributorRequest = JsonArrayRequest(Request.Method.GET, url.toString(), null, { response ->
+                    val contributorRequest = GitHubArrayRequest(url.toString(), { response ->
                         val responseString = response.toString()
                         val contributorList = mutableListOf<Contributor>()
                         for (x in 0 until response.length()) {

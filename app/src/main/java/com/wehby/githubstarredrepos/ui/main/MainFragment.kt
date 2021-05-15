@@ -6,21 +6,21 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
-import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.android.volley.Request
+import com.android.volley.toolbox.JsonArrayRequest
 import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.Volley
 import com.google.gson.Gson
-import com.google.gson.JsonObject
 import com.wehby.githubstarredrepos.R
 import com.wehby.githubstarredrepos.adapters.GitHubRepoAdapter
+import com.wehby.githubstarredrepos.model.Contributor
 import com.wehby.githubstarredrepos.model.GitHubRepository
-import com.wehby.githubstarredrepos.model.Owner
 import org.json.JSONObject
+import java.net.URL
 
 private const val LOG_TAG = "MainFragment"
 private const val REPO_SEARCH_URL = "https://api.github.com/search/repositories?q=stars%3A%3E0&per_page=100"
@@ -54,6 +54,21 @@ class MainFragment : Fragment() {
                     val item: JSONObject = response.getJSONArray("items").get(i) as JSONObject
                     var repo = gson.fromJson(item.toString(), GitHubRepository::class.java)
                     repoList.add(gson.fromJson(item.toString(), GitHubRepository::class.java))
+                    if (i == 2) {
+                        val url = URL("https", "api.github.com", "/repos/${repo.owner.login}/${repo.name}/contributors?per_page=3")
+                        val contributorRequest = JsonArrayRequest(Request.Method.GET, url.toString(), null, { response ->
+                            val responseString = response.toString()
+                            val contributorList = mutableListOf<Contributor>()
+                            for (x in 0 until response.length()) {
+                                val contributorItem: JSONObject = response[x] as JSONObject
+                                contributorList.add(gson.fromJson(contributorItem.toString(), Contributor::class.java))
+                            }
+                            Log.d(LOG_TAG, responseString)
+                        }, {
+                            it.printStackTrace()
+                            Log.e(LOG_TAG, "error getting contributors ${it.localizedMessage}") })
+                        queue.add(contributorRequest)
+                    }
                 }
 
                 repoRecyclerView.setHasFixedSize(true)

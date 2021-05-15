@@ -1,5 +1,6 @@
 package com.wehby.githubstarredrepos.adapters
 
+import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -8,11 +9,16 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.wehby.githubstarredrepos.R
+import com.wehby.githubstarredrepos.listeners.OnUriContainerClickedListener
+import com.wehby.githubstarredrepos.model.Contributor
 import com.wehby.githubstarredrepos.model.GitHubRepository
 
 private const val NAME_SEPARATOR = " / "
 
-class GitHubRepoAdapter(private val gitHubRepos: ArrayList<GitHubRepository>) :
+class GitHubRepoAdapter(
+    private val gitHubRepos: ArrayList<GitHubRepository>,
+    private val onUrlContainerClickedListener: OnUriContainerClickedListener
+) :
     RecyclerView.Adapter<GitHubRepoAdapter.GitHubRepoItemViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GitHubRepoItemViewHolder {
@@ -26,9 +32,19 @@ class GitHubRepoAdapter(private val gitHubRepos: ArrayList<GitHubRepository>) :
         holder.starCount.text = gitHubRepos[position].stargazers_count.toString()
         Glide.with(holder.userAvatar).load(gitHubRepos[position].owner.avatar_url).into(holder.userAvatar)
         if (gitHubRepos[position].contributors != null) {
-            Glide.with(holder.contributor1).load(gitHubRepos[position].contributors[0].avatar_url).into(holder.contributor1)
-            Glide.with(holder.contributor2).load(gitHubRepos[position].contributors[1].avatar_url).into(holder.contributor2)
-            Glide.with(holder.contributor3).load(gitHubRepos[position].contributors[2].avatar_url).into(holder.contributor3)
+            setupContributorView(holder.contributor1, gitHubRepos[position].contributors[0])
+            setupContributorView(holder.contributor2, gitHubRepos[position].contributors[1])
+            setupContributorView(holder.contributor3, gitHubRepos[position].contributors[2])
+        }
+        holder.mainLayout.setOnClickListener {
+            onUrlContainerClickedListener.onUriContainerClicked(Uri.parse(gitHubRepos[position].html_url))
+        }
+    }
+
+    private fun setupContributorView(contributorView: ImageView, contributor: Contributor) {
+        Glide.with(contributorView).load(contributor.avatar_url).into(contributorView)
+        contributorView.setOnClickListener {
+            onUrlContainerClickedListener.onUriContainerClicked(Uri.parse(contributor.html_url))
         }
     }
 
@@ -42,6 +58,7 @@ class GitHubRepoAdapter(private val gitHubRepos: ArrayList<GitHubRepository>) :
     }
 
     class GitHubRepoItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        val mainLayout: View = itemView.findViewById(R.id.main_layout)
         val userAndRepoName: TextView = itemView.findViewById(R.id.user_and_repo_name)
         val userAvatar: ImageView = itemView.findViewById(R.id.repo_owner_avatar)
         val contributor1: ImageView = itemView.findViewById(R.id.contributor1)

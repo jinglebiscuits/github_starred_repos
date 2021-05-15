@@ -1,5 +1,7 @@
 package com.wehby.githubstarredrepos.ui.main
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -17,6 +19,7 @@ import com.android.volley.toolbox.Volley
 import com.google.gson.Gson
 import com.wehby.githubstarredrepos.R
 import com.wehby.githubstarredrepos.adapters.GitHubRepoAdapter
+import com.wehby.githubstarredrepos.listeners.OnUriContainerClickedListener
 import com.wehby.githubstarredrepos.model.Contributor
 import com.wehby.githubstarredrepos.model.GitHubRepository
 import org.json.JSONObject
@@ -25,7 +28,7 @@ import java.net.URL
 private const val LOG_TAG = "MainFragment"
 private const val REPO_SEARCH_URL = "https://api.github.com/search/repositories?q=stars%3A%3E0&per_page=2"
 
-class MainFragment : Fragment() {
+class MainFragment : Fragment(), OnUriContainerClickedListener {
 
     private lateinit var viewModel: MainViewModel
     private lateinit var makeRequestButton: Button
@@ -49,7 +52,7 @@ class MainFragment : Fragment() {
 
                 val jsonArray = response.getJSONArray("items")
                 val repoList = ArrayList<GitHubRepository>()
-                repoListAdapter = GitHubRepoAdapter(repoList)
+                repoListAdapter = GitHubRepoAdapter(repoList, this)
                 for (i in 0 until jsonArray.length()) {
                     val item: JSONObject = response.getJSONArray("items").get(i) as JSONObject
                     var repo = gson.fromJson(item.toString(), GitHubRepository::class.java)
@@ -89,6 +92,12 @@ class MainFragment : Fragment() {
 
         viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
         // TODO: Use the ViewModel
+    }
+
+    override fun onUriContainerClicked(uri: Uri) {
+        val intent = Intent(Intent.ACTION_VIEW)
+        intent.data = uri
+        startActivity(intent)
     }
 
     companion object {

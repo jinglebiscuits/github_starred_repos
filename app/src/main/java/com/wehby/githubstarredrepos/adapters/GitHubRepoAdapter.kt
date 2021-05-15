@@ -10,6 +10,8 @@ import com.bumptech.glide.Glide
 import com.wehby.githubstarredrepos.R
 import com.wehby.githubstarredrepos.model.GitHubRepository
 
+private const val NAME_SEPARATOR = " / "
+
 class GitHubRepoAdapter(private val gitHubRepos: List<GitHubRepository>) :
     RecyclerView.Adapter<GitHubRepoAdapter.GitHubRepoItemViewHolder>() {
 
@@ -19,8 +21,7 @@ class GitHubRepoAdapter(private val gitHubRepos: List<GitHubRepository>) :
     }
 
     override fun onBindViewHolder(holder: GitHubRepoItemViewHolder, position: Int) {
-        holder.userName.text = gitHubRepos[position].owner.login
-        holder.repoName.text = gitHubRepos[position].name
+        holder.userAndRepoName.text = gitHubRepos[position].owner.login + NAME_SEPARATOR + gitHubRepos[position].name
         holder.repoDescription.text = gitHubRepos[position].description
         holder.starCount.text = gitHubRepos[position].stargazers_count.toString()
         Glide.with(holder.userAvatar).load(gitHubRepos[position].owner.avatar_url).into(holder.userAvatar)
@@ -31,9 +32,8 @@ class GitHubRepoAdapter(private val gitHubRepos: List<GitHubRepository>) :
     }
 
     class GitHubRepoItemViewHolder(private val itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val userName: TextView = itemView.findViewById(R.id.user_name)
-        val userAvatar: ImageView = itemView.findViewById(R.id.user_avatar)
-        val repoName: TextView = itemView.findViewById(R.id.repo_name)
+        val userAndRepoName: TextView = itemView.findViewById(R.id.user_and_repo_name)
+        val userAvatar: ImageView = itemView.findViewById(R.id.repo_owner_avatar)
         val repoDescription: TextView = itemView.findViewById(R.id.repo_description)
         val starCount: TextView = itemView.findViewById(R.id.star_count)
     }

@@ -8,6 +8,4 @@ class GitHubRepository(
     val stargazers_count: Int,
     val html_url: String,
     var contributors: MutableList<Contributor> = mutableListOf()
-) {
-
-}
+)

@@ -3,8 +3,6 @@ plugins {
     id 'kotlin-android'
 }
 
-println TEST_PROPERTY
-
 android {
     compileSdkVersion 30
 
@@ -15,7 +13,7 @@ android {
         versionCode 1
         versionName "1.0"
 
-        if(project.hasProperty("GITHUB_TOKEN")){
+        if (project.hasProperty("GITHUB_TOKEN")) {
             buildConfigField "String", "GITHUB_TOKEN", "\"${property("GITHUB_TOKEN")}\""
         } else {
             buildConfigField "String", "GITHUB_TOKEN", "\"\""
